@@ -1,72 +1,46 @@
-import os
+import streamlit as st
 import torch
-import torch.nn.functional as F
-from flask import Flask, request, render_template
-from torchvision import transforms
+import torchvision.transforms as transforms
 from PIL import Image
-from io import BytesIO
-from model import BayesianCNN
 
-# CIFAR-10 classes
-classes = ('plane','car','bird','cat','deer','dog','frog','horse','ship','truck')
+# Title
+st.title("CIFAR-10 Image Classifier")
 
-# Load model weights
-net = BayesianCNN()
-net.load_state_dict(torch.load("bayesian_cnn.pth", map_location="cpu"))
-net.eval()
+# Cache the model so it loads only once
+@st.cache_resource
+def load_model():
+    # Adjust path to your trained model file
+    model = torch.load("model.pth", map_location="cpu")
+    model.eval()
+    return model
 
-app = Flask(__name__)
+model = load_model()
 
+# Define preprocessing
 transform = transforms.Compose([
     transforms.Resize((32, 32)),
     transforms.ToTensor(),
-    transforms.Normalize((0.5,0.5,0.5),(0.5,0.5,0.5))
+    transforms.Normalize((0.5,), (0.5,))
 ])
 
-@app.route("/", methods=["GET", "POST"])
-def index():
-    preview_file = None
-    error = None
-    results = None
+# File uploader
+uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+if uploaded_file is not None:
+    image = Image.open(uploaded_file).convert("RGB")
+    st.image(image, caption="Uploaded Image", use_column_width=True)
 
-    if request.method == "POST":
-        # Case 1: User clicked one of the default images
-        if "default_image" in request.form:
-            filename = request.form["default_image"]
-            default_path = os.path.join("static", filename)
-            try:
-                img = Image.open(default_path).convert("RGB")
-                preview_file = filename
-            except Exception:
-                error = f"Default image {filename} not valid"
-                return render_template("index.html", results=None, error=error, classes=classes)
-            img = transform(img).unsqueeze(0)
+    # Preprocess
+    input_tensor = transform(image).unsqueeze(0)
 
-        # Case 2: User uploaded an image
-        else:
-            file = request.files.get("image")
-            if not file or file.filename == "":
-                error = "No image uploaded"
-                return render_template("index.html", results=None, error=error, classes=classes)
+    # Predict
+    with torch.no_grad():
+        output = model(input_tensor)
+        predicted_class = output.argmax(dim=1).item()
 
-            try:
-                img_bytes = file.read()
-                img = Image.open(BytesIO(img_bytes)).convert("RGB")
-                preview_file = file.filename
-            except Exception:
-                error = "Invalid or unsupported image file"
-                return render_template("index.html", results=None, error=error, classes=classes)
+    # CIFAR-10 class labels
+    classes = [
+        "airplane", "automobile", "bird", "cat", "deer",
+        "dog", "frog", "horse", "ship", "truck"
+    ]
 
-            img = transform(img).unsqueeze(0)
-
-        # Run inference
-        with torch.no_grad():
-            outputs = net(img)
-            probs = F.softmax(outputs, dim=1)[0]
-
-        results = {classes[i]: float(probs[i]) for i in range(10)}
-
-    return render_template("index.html", results=results, preview=preview_file, error=error, classes=classes)
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    st.write(f"Predicted class: **{classes[predicted_class]}**")
