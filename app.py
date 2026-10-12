@@ -97,5 +97,8 @@ df = pd.DataFrame({
     "Probability": top_probs.tolist()
 }).sort_values("Probability", ascending=False)
 
+# Reset index so bar_chart respects sorted order
+df = df.set_index("Class")
+
 st.write("### Top-5 class probabilities (sorted bar chart):")
-st.bar_chart(df.set_index("Class"))
+st.bar_chart(df)
