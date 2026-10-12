@@ -41,23 +41,24 @@ st.write("Or choose one of the default images:")
 col1, col2, col3 = st.columns(3)
 
 default_choice = None
+
 with col1:
-    with st.container():
-        img1 = Image.open("static/images1.jpg")
-        st.image(img1, caption="images1.jpg", use_column_width=True)
-        default_choice = default_choice or (st.button("Use images1") and "images1.jpg")
+    img1 = Image.open("static/images1.jpg")
+    st.image(img1.resize((200, 200)), caption="images1.jpg")  # fixed preview size
+    if st.button("Use images1", key="btn1"):
+        default_choice = "images1.jpg"
 
 with col2:
-    with st.container():
-        img2 = Image.open("static/images2.jpg")
-        st.image(img2, caption="images2.jpg", use_column_width=True)
-        default_choice = default_choice or (st.button("Use images2") and "images2.jpg")
+    img2 = Image.open("static/images2.jpg")
+    st.image(img2.resize((200, 200)), caption="images2.jpg")
+    if st.button("Use images2", key="btn2"):
+        default_choice = "images2.jpg"
 
 with col3:
-    with st.container():
-        img3 = Image.open("static/images3.jpg")
-        st.image(img3, caption="images3.jpg", use_column_width=True)
-        default_choice = default_choice or (st.button("Use images3") and "images3.jpg")
+    img3 = Image.open("static/images3.jpg")
+    st.image(img3.resize((200, 200)), caption="images3.jpg")
+    if st.button("Use images3", key="btn3"):
+        default_choice = "images3.jpg"
 
 # Decide which image to use
 if uploaded_file is not None:
