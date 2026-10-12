@@ -32,6 +32,10 @@ classes = [
     "dog", "frog", "horse", "ship", "truck"
 ]
 
+# Show available classes at upload section
+st.write("### The model can classify into these categories:")
+st.write(", ".join(classes))
+
 # File uploader
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
@@ -39,12 +43,11 @@ uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 st.write("Or choose one of the default images:")
 
 col1, col2, col3 = st.columns(3)
-
 default_choice = None
 
 with col1:
     img1 = Image.open("static/images1.jpg")
-    st.image(img1.resize((200, 200)), caption="images1.jpg")  # fixed preview size
+    st.image(img1.resize((200, 200)), caption="images1.jpg")
     if st.button("Use images1", key="btn1"):
         default_choice = "images1.jpg"
 
