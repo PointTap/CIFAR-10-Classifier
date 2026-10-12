@@ -38,7 +38,7 @@ uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 # Default sample if nothing uploaded
 if uploaded_file is None:
     st.info("Upload an image to classify. Using default sample...")
-    image = Image.open("static/sample.jpg").convert("RGB")  # put a sample image in static/
+    image = Image.open("static/images1.jpg").convert("RGB")  # use existing file
 else:
     image = Image.open(uploaded_file).convert("RGB")
 
@@ -51,7 +51,7 @@ input_tensor = transform(image).unsqueeze(0)
 # Predict
 with torch.no_grad():
     output = model(input_tensor)
-    probs = F.softmax(output, dim=1)  # convert logits to probabilities
+    probs = F.softmax(output, dim=1)
     predicted_class = probs.argmax(dim=1).item()
 
 st.write(f"Predicted class: **{classes[predicted_class]}**")
