@@ -99,14 +99,14 @@ df = pd.DataFrame({
 }).sort_values("Probability", ascending=False)
 
 # Altair bar chart with labels
-chart = alt.Chart(df).mark_bar().encode(
+bars = alt.Chart(df).mark_bar().encode(
     x=alt.X("Class:N", sort="-y", axis=alt.Axis(labelAngle=0)),  # horizontal labels
     y=alt.Y("Probability:Q"),
     tooltip=["Class", "Probability"]
 ).properties(width=500, height=300)
 
 # Add text labels above bars
-text = chart.mark_text(
+labels = alt.Chart(df).mark_text(
     align="center",
     baseline="bottom",
     dy=-5
@@ -117,4 +117,4 @@ text = chart.mark_text(
 )
 
 st.write("### Top-5 class probabilities (sorted bar chart):")
-st.altair_chart(chart + text)
+st.altair_chart(bars + labels, use_container_width=True)
