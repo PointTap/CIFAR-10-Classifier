@@ -89,13 +89,13 @@ st.write(f"Predicted class: **{classes[predicted_class]}**")
 
 # Show Top-5 probabilities sorted
 top_probs, top_idxs = torch.topk(probs[0], 5)
-
-# Convert to DataFrame for plotting
 top_classes = [classes[idx] for idx in top_idxs]
+
+# Create DataFrame and sort by probability descending
 df = pd.DataFrame({
     "Class": top_classes,
     "Probability": top_probs.tolist()
-})
+}).sort_values("Probability", ascending=False)
 
-st.write("### Top-5 class probabilities (bar chart):")
+st.write("### Top-5 class probabilities (sorted bar chart):")
 st.bar_chart(df.set_index("Class"))
