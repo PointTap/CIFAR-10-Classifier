@@ -43,19 +43,19 @@ col1, col2, col3 = st.columns(3)
 default_choice = None
 with col1:
     img1 = Image.open("static/images1.jpg")
-    st.image(img1, caption="images1.jpg", use_column_width=True)
+    st.image(img1, caption="images1.jpg", width=200)  # fixed width
     if st.button("Use images1"):
         default_choice = "images1.jpg"
 
 with col2:
     img2 = Image.open("static/images2.jpg")
-    st.image(img2, caption="images2.jpg", use_column_width=True)
+    st.image(img2, caption="images2.jpg", width=200)  # fixed width
     if st.button("Use images2"):
         default_choice = "images2.jpg"
 
 with col3:
     img3 = Image.open("static/images3.jpg")
-    st.image(img3, caption="images3.jpg", use_column_width=True)
+    st.image(img3, caption="images3.jpg", width=200)  # fixed width
     if st.button("Use images3"):
         default_choice = "images3.jpg"
 
