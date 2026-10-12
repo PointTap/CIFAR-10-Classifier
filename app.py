@@ -10,7 +10,7 @@ st.title("CIFAR-10 Image Classifier")
 @st.cache_resource
 def load_model():
     # Adjust path to your trained model file
-    model = torch.load("model.pth", map_location="cpu")
+    model = torch.load("bayesian_cnn.pth", map_location="cpu")
     model.eval()
     return model
 
