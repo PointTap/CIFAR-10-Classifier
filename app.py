@@ -35,10 +35,16 @@ classes = [
 # File uploader
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
-# Default sample if nothing uploaded
+# Default image selector
+default_choice = st.selectbox(
+    "Choose a default image if no upload:",
+    ("images1.jpg", "images2.jpg", "images3.jpg")
+)
+
+# Use uploaded file or default
 if uploaded_file is None:
-    st.info("Upload an image to classify. Using default sample...")
-    image = Image.open("static/images1.jpg").convert("RGB")  # use existing file
+    st.info(f"Upload an image to classify. Using default sample: {default_choice}")
+    image = Image.open(f"static/{default_choice}").convert("RGB")
 else:
     image = Image.open(uploaded_file).convert("RGB")
 
