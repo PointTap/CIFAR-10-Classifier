@@ -98,21 +98,22 @@ df = pd.DataFrame({
     "Probability": top_probs.tolist()
 }).sort_values("Probability", ascending=False)
 
-# Altair bar chart with labels
+# Altair bar chart with labels BELOW each class
 bars = alt.Chart(df).mark_bar().encode(
     x=alt.X("Class:N", sort="-y", axis=alt.Axis(labelAngle=0)),  # horizontal labels
     y=alt.Y("Probability:Q"),
     tooltip=["Class", "Probability"]
 ).properties(width=500, height=300)
 
-# Add text labels above bars
+# Add text labels BELOW each bar (at y=0)
 labels = alt.Chart(df).mark_text(
     align="center",
-    baseline="bottom",
-    dy=-5
+    baseline="top",
+    dy=15,  # move text below x-axis labels
+    color="black"
 ).encode(
     x="Class:N",
-    y="Probability:Q",
+    y=alt.value(0),  # place at baseline
     text=alt.Text("Probability:Q", format=".2f")
 )
 
