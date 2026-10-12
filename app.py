@@ -11,9 +11,9 @@ st.title("CIFAR-10 Image Classifier")
 # Cache the model so it loads only once
 @st.cache_resource
 def load_model():
-    model = BayesianCNN()  # instantiate your model architecture
+    model = BayesianCNN()
     state_dict = torch.load("bayesian_cnn.pth", map_location="cpu")
-    model.load_state_dict(state_dict)  # load weights
+    model.load_state_dict(state_dict)
     model.eval()
     return model
 
@@ -35,21 +35,41 @@ classes = [
 # File uploader
 uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
-# Default image selector
-default_choice = st.selectbox(
-    "Choose a default image if no upload:",
-    ("images1.jpg", "images2.jpg", "images3.jpg")
-)
+# Default image selection UI
+st.write("Or choose one of the default images:")
 
-# Use uploaded file or default
-if uploaded_file is None:
-    st.info(f"Upload an image to classify. Using default sample: {default_choice}")
+col1, col2, col3 = st.columns(3)
+
+default_choice = None
+with col1:
+    img1 = Image.open("static/images1.jpg")
+    st.image(img1, caption="images1.jpg", use_column_width=True)
+    if st.button("Use images1"):
+        default_choice = "images1.jpg"
+
+with col2:
+    img2 = Image.open("static/images2.jpg")
+    st.image(img2, caption="images2.jpg", use_column_width=True)
+    if st.button("Use images2"):
+        default_choice = "images2.jpg"
+
+with col3:
+    img3 = Image.open("static/images3.jpg")
+    st.image(img3, caption="images3.jpg", use_column_width=True)
+    if st.button("Use images3"):
+        default_choice = "images3.jpg"
+
+# Decide which image to use
+if uploaded_file is not None:
+    image = Image.open(uploaded_file).convert("RGB")
+elif default_choice is not None:
     image = Image.open(f"static/{default_choice}").convert("RGB")
 else:
-    image = Image.open(uploaded_file).convert("RGB")
+    st.info("Upload an image or click one of the defaults above.")
+    st.stop()
 
-# Show image
-st.image(image, caption="Input Image", use_column_width=True)
+# Show chosen image
+st.image(image, caption="Chosen Image", use_column_width=True)
 
 # Preprocess
 input_tensor = transform(image).unsqueeze(0)
