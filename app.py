@@ -3,6 +3,7 @@ import torch
 import torchvision.transforms as transforms
 import torch.nn.functional as F
 from PIL import Image
+import pandas as pd
 from model import BayesianCNN   # make sure your model class is defined in model.py
 
 # Title
@@ -88,6 +89,13 @@ st.write(f"Predicted class: **{classes[predicted_class]}**")
 
 # Show Top-5 probabilities sorted
 top_probs, top_idxs = torch.topk(probs[0], 5)
-st.write("Top-5 class probabilities:")
-for i in range(top_probs.size(0)):
-    st.write(f"{classes[top_idxs[i]]}: {top_probs[i].item():.4f}")
+
+# Convert to DataFrame for plotting
+top_classes = [classes[idx] for idx in top_idxs]
+df = pd.DataFrame({
+    "Class": top_classes,
+    "Probability": top_probs.tolist()
+})
+
+st.write("### Top-5 class probabilities (bar chart):")
+st.bar_chart(df.set_index("Class"))
